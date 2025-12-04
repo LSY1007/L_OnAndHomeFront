@@ -1,5 +1,41 @@
- 전체 구조도
+#  On&Home - 홈 가전 이커머스 플랫폼
 
+> Spring Boot Monolithic에서 React + Spring Boot API 분리 아키텍처로의 현대화 프로젝트
+
+##  목차
+- [프로젝트 소개](#-프로젝트-소개)
+- [시스템 아키텍처](#-시스템-아키텍처)
+- [기술 스택](#-기술-스택)
+- [프로젝트 구조](#-프로젝트-구조)
+- [핵심 기능](#-핵심-기능)
+- [실행 방법](#-실행-방법)
+- [API 엔드포인트](#-api-엔드포인트)
+- [환경 변수 설정](#-환경-변수-설정)
+- [배포](#-배포)
+- [보안 고려사항](#-보안-고려사항)
+- [개발 가이드](#-개발-가이드)
+- [트러블슈팅](#-트러블슈팅)
+- [개발자 정보](#-개발자-정보)
+
+---
+
+##  프로젝트 소개
+
+**On&Home**은 가전제품을 전문적으로 판매하는 이커머스 플랫폼으로, 기존 Spring Boot + Thymeleaf 모놀리식 구조에서 **React 프론트엔드 + Spring Boot REST API 백엔드**로 분리하는 현대화 작업을 진행한 프로젝트입니다.
+
+###  프로젝트 목표
+-  **레거시 마이그레이션**: Thymeleaf → React로 프론트엔드 현대화
+-  **향상된 UX**: 모던한 UI/UX와 반응형 디자인 구현
+-  **보안 강화**: JWT 기반 인증 및 자동 토큰 갱신
+-  **실시간 기능**: WebSocket 기반 알림 시스템
+-  **제품 비교**: 최대 4개 제품 동시 비교 기능
+
+---
+
+##  시스템 아키텍처
+
+###  전체 구조도
+```
 ┌─────────────────────────────────────────────────────────┐
 │                    사용자 (Browser)                      │ 
 └────────────────────┬────────────────────────────────────┘
@@ -31,10 +67,12 @@
     │  • 주문/상품    │  │                  │
     │  • 리뷰/Q&A    │   │                 │
     └────────────────┘  └──────────────────┘
+```
 
-🔄 요청 처리 흐름
-1️⃣ 일반 요청 (상품 조회, 주문 등)
+###  요청 처리 흐름
 
+#### 1️ 일반 요청 (상품 조회, 주문 등)
+```
 [사용자] 
     ↓ (클릭/입력)
 [React Frontend]
@@ -48,9 +86,10 @@
 [React Frontend]
     ↓ (Redux 상태 업데이트)
 [화면 렌더링]
+```
 
-2️⃣ 인증 요청 (로그인/회원가입)
-
+#### 2️ 인증 요청 (로그인/회원가입)
+```
 [사용자]
     ↓ (로그인 시도)
 [React Frontend]
@@ -62,9 +101,10 @@
 [React Frontend]
     ↓ (localStorage 저장)
 [이후 요청 시 Header에 포함]
+```
 
-3️⃣ 소셜 로그인 (Naver OAuth2)
-
+#### 3️ 소셜 로그인 (Naver OAuth2)
+```
 [사용자]
     ↓ (네이버 로그인 클릭)
 [Naver OAuth2 Server]
@@ -76,29 +116,36 @@
 [JWT Token 발급]
     ↓
 [React Frontend]
+```
 
-🛠️ 기술 스택
-Frontend
-  ● Language : JavaScript
-  ● Framework : React
-  ● Styling: Tailwind CSS
-  ● State Management: Redux Toolkit
+---
 
-Backend (Main - Spring Boot)
-  ● Language: Java
-  ● Framework: Spring Boot
-  ● Security: Spring Security + JWT + OAuth2 Client
-  ● Architecture: RESTful API, MVC Pattern
-  ● Build Tool: Gradle
-  ● DB : MySQL
+##  기술 스택
 
-DevOps & Tools
-  ● 버전 관리: Git, GitHub
-  ● 개발 도구: VS Code, IntelliJ IDEA
-  ● API 테스트: Postman
+### Frontend
+- **Language**: JavaScript
+- **Framework**: React
+- **Styling**: Tailwind CSS
+- **State Management**: Redux Toolkit
 
-📁 프로젝트 구조
-Frontend (C:\OnAndHomeFront)
+### Backend (Main - Spring Boot)
+- **Language**: Java
+- **Framework**: Spring Boot
+- **Security**: Spring Security + JWT + OAuth2 Client
+- **Architecture**: RESTful API, MVC Pattern
+- **Build Tool**: Gradle
+- **DB**: MySQL
+
+### DevOps & Tools
+- **버전 관리**: Git, GitHub
+- **개발 도구**: VS Code, IntelliJ IDEA
+- **API 테스트**: Postman
+
+---
+
+##  프로젝트 구조
+
+### Frontend (C:\OnAndHomeFront)
 ```
 onandhomefront/
 ├── public/                          # 정적 파일
@@ -205,8 +252,7 @@ onandhomefront/
 └── README.md
 ```
 
-Backend (C:\OnAndHomeBack)
-
+### Backend (C:\OnAndHomeBack)
 ```
 OnAndHome/
 ├── src/main/java/com/home/onhome/
@@ -314,14 +360,18 @@ OnAndHome/
 └── README.md
 ```
 
-🎯 핵심 기능
-🔐 1. 인증 및 보안
-JWT 기반 인증
-  ● Access Token: 15분 유효기간
-  ● Refresh Token: 7일 유효기간
-  ● 자동 토큰 갱신: Access Token 만료 시 자동 갱신
-  ● Refresh Token Rotation: 보안 강화를 위한 토큰 로테이션
-```
+---
+
+##  핵심 기능
+
+###  1. 인증 및 보안
+
+#### JWT 기반 인증
+- Access Token: 15분 유효기간
+- Refresh Token: 7일 유효기간
+- 자동 토큰 갱신: Access Token 만료 시 자동 갱신
+- Refresh Token Rotation: 보안 강화를 위한 토큰 로테이션
+```javascript
 // Frontend: Axios Interceptor로 자동 토큰 갱신
 axios.interceptors.response.use(
   response => response,
@@ -333,41 +383,41 @@ axios.interceptors.response.use(
   }
 );
 ```
-소셜 로그인 (Naver OAuth2)
-  ● 네이버 계정으로 간편 로그인
-  ● 자동 회원가입 및 프로필 정보 동기화
-  ● OAuth2 인증 플로우 완벽 구현
 
-🛒 2. E-commerce 기능
-상품 관리
-● 카테고리별 상품 조회
-  ● TV, 냉장고, 세탁기 등 카테고리 분류
-  ● 무한 스크롤 페이징
-  ● 정렬 기능 (인기순, 가격순, 최신순)
+#### 소셜 로그인 (Naver OAuth2)
+- 네이버 계정으로 간편 로그인
+- 자동 회원가입 및 프로필 정보 동기화
+- OAuth2 인증 플로우 완벽 구현
 
+###  2. E-commerce 기능
 
-● 상품 상세
-  ● 고해상도 이미지 갤러리
-  ● 상세 스펙 정보
-  ● 관련 상품 추천
+#### 상품 관리
+**카테고리별 상품 조회**
+- TV, 냉장고, 세탁기 등 카테고리 분류
+- 무한 스크롤 페이징
+- 정렬 기능 (인기순, 가격순, 최신순)
 
+**상품 상세**
+- 고해상도 이미지 갤러리
+- 상세 스펙 정보
+- 관련 상품 추천
 
+#### 장바구니 시스템
+- 실시간 수량 조절
+- 선택 삭제 / 전체 삭제
+- 총 금액 자동 계산
+- 로그인 사용자 DB 저장
 
-● 장바구니 시스템
-  ● 실시간 수량 조절
-  ● 선택 삭제 / 전체 삭제
-  ● 총 금액 자동 계산
-  ● 로그인 사용자 DB 저장
+#### 주문 및 결제
+- 주문자 정보 입력
+- 배송지 관리
+- 주문 내역 조회
+- 주문 상태 추적
 
-● 주문 및 결제
-  ● 주문자 정보 입력
-  ● 배송지 관리
-  ● 주문 내역 조회
-  ● 주문 상태 추적
+###  3. 제품 비교 시스템
 
-🔍 3. 제품 비교 시스템
-최대 4개 제품 동시 비교
-```
+**최대 4개 제품 동시 비교**
+```javascript
 // 비교 기능 핵심 로직
 const addToCompare = (product) => {
   if (compareList.length >= 4) {
@@ -384,27 +434,30 @@ const addToCompare = (product) => {
   dispatch(addToCompareList(product));
 };
 ```
-비교 항목:
-  ● 가격, 브랜드, 모델명
-  ● 주요 스펙 (크기, 용량, 에너지 등급 등)
-  ● 사용자 평점
-  ● 리뷰 수
 
-💬 4. 커뮤니티 기능
-상품 리뷰
-  ● ⭐ 별점 평가 (1-5점)
-  ● 사진 첨부 가능
-  ● 구매 확정 후 작성 가능
-  ● 좋아요 기능
+**비교 항목:**
+- 가격, 브랜드, 모델명
+- 주요 스펙 (크기, 용량, 에너지 등급 등)
+- 사용자 평점
+- 리뷰 수
 
-Q&A (비공개 문의)
-● 비공개 문의 시스템
-   ● 작성자와 관리자만 조회 가능
-   ● 🔒 아이콘으로 비공개 표시
+###  4. 커뮤니티 기능
 
-● 답변 알림 기능
-● 카테고리 분류 (상품, 배송, 교환/환불 등)
- ```
+#### 상품 리뷰
+- ⭐ 별점 평가 (1-5점)
+- 사진 첨부 가능
+- 구매 확정 후 작성 가능
+- 좋아요 기능
+
+#### Q&A (비공개 문의)
+**비공개 문의 시스템**
+- 작성자와 관리자만 조회 가능
+- 🔒 아이콘으로 비공개 표시
+
+**기타 기능**
+- 답변 알림 기능
+- 카테고리 분류 (상품, 배송, 교환/환불 등)
+```java
 // Backend: Q&A 비공개 처리
 @GetMapping("/qna/{id}")
 public ResponseEntity<QnAResponse> getQnA(
@@ -424,20 +477,18 @@ public ResponseEntity<QnAResponse> getQnA(
 }
 ```
 
-공지사항
+#### 공지사항
+- 중요 공지 상단 고정
+- 카테고리별 분류
+- 조회수 집계
 
-  ● 중요 공지 상단 고정
-  ● 카테고리별 분류
-  ● 조회수 집계
-
-📢 5. 실시간 알림 (WebSocket)
-
-  ● 주문 상태 변경 알림
-  ● Q&A 답변 알림
-  ● 장바구니 품절 알림
-  ● 이벤트 알림
-```
-  // Frontend: WebSocket 연결
+###  5. 실시간 알림 (WebSocket)
+- 주문 상태 변경 알림
+- Q&A 답변 알림
+- 장바구니 품절 알림
+- 이벤트 알림
+```javascript
+// Frontend: WebSocket 연결
 const connectWebSocket = () => {
   const socket = new WebSocket('ws://localhost:8080/ws/notifications');
   
@@ -447,28 +498,29 @@ const connectWebSocket = () => {
   };
 };
 ```
-👨‍💼 6. 관리자 기능
 
-  ● 상품 등록/수정/삭제
-  ● 주문 관리 및 배송 처리
-  ● 공지사항 관리
-  ● Q&A 답변
-  ● 리뷰 관리 (부적절한 리뷰 삭제)
-  ● 사용자 관리
-  ● 통계 대시보드
+###  6. 관리자 기능
+- 상품 등록/수정/삭제
+- 주문 관리 및 배송 처리
+- 공지사항 관리
+- Q&A 답변
+- 리뷰 관리 (부적절한 리뷰 삭제)
+- 사용자 관리
+- 통계 대시보드
 
+---
 
-🚀 실행 방법
-📋 사전 요구사항
+##  실행 방법
 
-  ● Node.js: 18.x 이상
-  ● Java: 17 이상
-  ● MySQL: 8.0 이상
-  ● Gradle: 8.x 이상
+###  사전 요구사항
+- Node.js: 18.x 이상
+- Java: 17 이상
+- MySQL: 8.0 이상
+- Gradle: 8.x 이상
 
-  1️⃣ 데이터베이스 설정
-```
-  -- MySQL 데이터베이스 생성
+### 1️ 데이터베이스 설정
+```sql
+-- MySQL 데이터베이스 생성
 CREATE DATABASE onandhome CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 사용자 생성 (선택사항)
@@ -476,8 +528,9 @@ CREATE USER 'onandhome'@'localhost' IDENTIFIED BY 'your_password';
 GRANT ALL PRIVILEGES ON onandhome.* TO 'onandhome'@'localhost';
 FLUSH PRIVILEGES;
 ```
-2️⃣ Backend 실행
-```
+
+### 2️ Backend 실행
+```bash
 # 1. 프로젝트 이동
 cd C:\OnAndHomeBack
 
@@ -518,13 +571,13 @@ jwt:
 java -jar build/libs/OnAndHome-0.0.1-SNAPSHOT.jar
 ```
 
-Backend 실행 확인:
-  ● 서버: http://localhost:8080
-  ● Swagger UI (있는 경우): http://localhost:8080/swagger-ui.html
-  ● H2 Console (개발용): http://localhost:8080/h2-console
+**Backend 실행 확인:**
+- 서버: http://localhost:8080
+- Swagger UI (있는 경우): http://localhost:8080/swagger-ui.html
+- H2 Console (개발용): http://localhost:8080/h2-console
 
-3️⃣ Frontend 실행
-```
+### 3️ Frontend 실행
+```bash
 # 1. 프로젝트 이동
 cd C:\OnAndHomeFront
 
@@ -542,26 +595,30 @@ npm start
 npm run build
 ```
 
-Frontend 실행 확인:
-  ● 개발 서버: http://localhost:3000
-  ● 자동으로 브라우저가 열립니다
+**Frontend 실행 확인:**
+- 개발 서버: http://localhost:3000
+- 자동으로 브라우저가 열립니다
 
-4️⃣ 초기 데이터 설정 (선택사항)
-```
+### 4️ 초기 데이터 설정 (선택사항)
+```bash
 # Backend에서 샘플 데이터 생성 API 호출
 curl -X POST http://localhost:8080/api/admin/init-data \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 ```
 
-📡 API 엔드포인트
+---
 
-● POST /login - 로그인
-● POST /register - 회원가입
-● POST /refresh - 토큰 갱신
-● POST /logout - 로그아웃
-● GET /me - 현재 사용자 정보
+## 📡 API 엔드포인트
 
-```
+### 🔐 인증 API (`/api/auth`)
+- POST `/login` - 로그인
+- POST `/register` - 회원가입
+- POST `/refresh` - 토큰 갱신
+- POST `/logout` - 로그아웃
+- GET `/me` - 현재 사용자 정보
+
+**로그인 요청 예시:**
+```json
 POST /api/auth/login
 {
   "username": "user@example.com",
@@ -577,7 +634,7 @@ POST /api/auth/login
 }
 ```
 
-### 🛍️ 상품 API (`/api/products`)
+###  상품 API (`/api/products`)
 
 | Method | Endpoint | 설명 | 인증 필요 |
 |--------|----------|------|-----------|
@@ -590,57 +647,60 @@ POST /api/auth/login
 | PUT | `/{id}` | 상품 수정 (관리자) | ✅ (ADMIN) |
 | DELETE | `/{id}` | 상품 삭제 (관리자) | ✅ (ADMIN) |
 
-**상품 목록 조회 예시**:
+**상품 목록 조회 예시:**
 ```
 GET /api/products?page=0&size=20&sort=createdAt,desc&category=TV
 ```
-🛒 장바구니 API (/api/cart)
 
-● GET / - 장바구니 조회
-● POST /items - 상품 추가
-● PUT /items/{itemId} - 수량 변경
-● DELETE /items/{itemId} - 상품 삭제
-● DELETE /clear - 장바구니 비우기
+### 🛒 장바구니 API (`/api/cart`)
+- GET `/` - 장바구니 조회
+- POST `/items` - 상품 추가
+- PUT `/items/{itemId}` - 수량 변경
+- DELETE `/items/{itemId}` - 상품 삭제
+- DELETE `/clear` - 장바구니 비우기
 
-📦 주문 API (/api/orders)
-● POST / - 주문 생성
-● GET / - 주문 내역 조회
-● GET /{orderId} - 주문 상세 조회
-● PUT /{orderId}/cancel - 주문 취소
-● PUT /{orderId}/status - 주문 상태 변경 (관리자)
+###  주문 API (`/api/orders`)
+- POST `/` - 주문 생성
+- GET `/` - 주문 내역 조회
+- GET `/{orderId}` - 주문 상세 조회
+- PUT `/{orderId}/cancel` - 주문 취소
+- PUT `/{orderId}/status` - 주문 상태 변경 (관리자)
 
-💬 리뷰 API (/api/reviews)
-● GET /product/{productId} - 상품 리뷰 조회
-● POST / - 리뷰 작성
-● PUT /{reviewId} - 리뷰 수정
-● DELETE /{reviewId} - 리뷰 삭제
-● POST /{reviewId}/like - 리뷰 좋아요
+###  리뷰 API (`/api/reviews`)
+- GET `/product/{productId}` - 상품 리뷰 조회
+- POST `/` - 리뷰 작성
+- PUT `/{reviewId}` - 리뷰 수정
+- DELETE `/{reviewId}` - 리뷰 삭제
+- POST `/{reviewId}/like` - 리뷰 좋아요
 
-❓ Q&A API (/api/qna)
-● GET /product/{productId} - 상품 Q&A 조회
-● GET /{qnaId} - Q&A 상세 조회
-● POST / - Q&A 작성
-● PUT /{qnaId} - Q&A 수정
-● DELETE /{qnaId} - Q&A 삭제
-● POST /{qnaId}/answer - Q&A 답변 (관리자) 
+###  Q&A API (`/api/qna`)
+- GET `/product/{productId}` - 상품 Q&A 조회
+- GET `/{qnaId}` - Q&A 상세 조회
+- POST `/` - Q&A 작성
+- PUT `/{qnaId}` - Q&A 수정
+- DELETE `/{qnaId}` - Q&A 삭제
+- POST `/{qnaId}/answer` - Q&A 답변 (관리자)
 
-📢 공지사항 API (/api/notices)
-● GET / - 공지사항 목록
-● GET /{noticeId} - 공지사항 상세
-● POST / - 공지사항 작성 (관리자)
-● PUT /{noticeId} - 공지사항 수정 (관리자)
-● DELETE /{noticeId} - 공지사항 삭제 (관리자)
+###  공지사항 API (`/api/notices`)
+- GET `/` - 공지사항 목록
+- GET `/{noticeId}` - 공지사항 상세
+- POST `/` - 공지사항 작성 (관리자)
+- PUT `/{noticeId}` - 공지사항 수정 (관리자)
+- DELETE `/{noticeId}` - 공지사항 삭제 (관리자)
 
-👨‍💼 관리자 API (/api/admin)
-● GET /dashboard - 대시보드 통계
-● GET /users - 사용자 목록
-● GET /orders - 전체 주문 관리
-● PUT /qna/{qnaId}/answer - Q&A 답변
-● DELETE /reviews/{reviewId} - 부적절한 리뷰 삭제
+###  관리자 API (`/api/admin`)
+- GET `/dashboard` - 대시보드 통계
+- GET `/users` - 사용자 목록
+- GET `/orders` - 전체 주문 관리
+- PUT `/qna/{qnaId}/answer` - Q&A 답변
+- DELETE `/reviews/{reviewId}` - 부적절한 리뷰 삭제
 
-🔧 환경 변수 설정
-Backend (application.yml)
-```
+---
+
+##  환경 변수 설정
+
+### Backend (application.yml)
+```yaml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/onandhome
@@ -705,8 +765,9 @@ logging:
     com.home.onhome: ${LOG_LEVEL:DEBUG}
     org.springframework.security: ${SECURITY_LOG_LEVEL:DEBUG}
 ```
-Frontend (.env)
-```
+
+### Frontend (.env)
+```env
 # API URL
 REACT_APP_API_URL=http://localhost:8080/api
 
@@ -721,10 +782,15 @@ REACT_APP_REDIRECT_URI=http://localhost:3000/oauth2/redirect
 REACT_APP_PAGE_SIZE=20
 REACT_APP_MAX_COMPARE_PRODUCTS=4
 ```
-🌐 배포
-프로덕션 빌드
-Backend
-```
+
+---
+
+##  배포
+
+### 프로덕션 빌드
+
+#### Backend
+```bash
 # JAR 파일 생성
 ./gradlew clean build -Pprofile=prod
 
@@ -732,8 +798,8 @@ Backend
 java -jar -Dspring.profiles.active=prod build/libs/OnAndHome-0.0.1-SNAPSHOT.jar
 ```
 
-Frontend
-```
+#### Frontend
+```bash
 # 프로덕션 빌드
 npm run build
 
@@ -741,8 +807,8 @@ npm run build
 # Nginx, Apache 등으로 서빙
 ```
 
-Nginx 설정 예시
-```
+### Nginx 설정 예시
+```nginx
 server {
     listen 80;
     server_name yourdomain.com;
@@ -771,15 +837,19 @@ server {
     }
 }
 ```
-🔒 보안 고려사항
-1. JWT 보안
-  ● ✅ 256비트 이상의 강력한 시크릿 키 사용
-  ● ✅ Access Token 짧은 유효기간 (15분)
-  ● ✅ Refresh Token Rotation
-  ● ✅ XSS 방지를 위한 httpOnly 쿠키 사용 고려
 
-2. CORS 설정
-```
+---
+
+##  보안 고려사항
+
+### 1. JWT 보안
+- ✅ 256비트 이상의 강력한 시크릿 키 사용
+- ✅ Access Token 짧은 유효기간 (15분)
+- ✅ Refresh Token Rotation
+- ✅ XSS 방지를 위한 httpOnly 쿠키 사용 고려
+
+### 2. CORS 설정
+```java
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
@@ -792,24 +862,30 @@ public class WebConfig implements WebMvcConfigurer {
 }
 ```
 
-3. SQL Injection 방지
-  ● JPA를 통한 파라미터 바인딩 자동 처리
-  ● Native Query 사용 시 파라미터 바인딩 명시
-4. XSS 방지
-  ● React의 자동 이스케이프 처리
-  ● DOMPurify 라이브러리 사용 (HTML 입력 시)
-5. CSRF 방지
-  ● REST API는 Stateless하므로 CSRF 토큰 불필요
-  ● 대신 JWT 토큰으로 인증
+### 3. SQL Injection 방지
+- JPA를 통한 파라미터 바인딩 자동 처리
+- Native Query 사용 시 파라미터 바인딩 명시
 
-📝 개발 가이드
-코드 컨벤션
-Java (Backend)
-  ● 패키지명: 소문자, 도메인 역순
-  ● 클래스명: PascalCase
-  ● 메서드명: camelCase
-  ● 상수: UPPER_SNAKE_CASE
-  ```
+### 4. XSS 방지
+- React의 자동 이스케이프 처리
+- DOMPurify 라이브러리 사용 (HTML 입력 시)
+
+### 5. CSRF 방지
+- REST API는 Stateless하므로 CSRF 토큰 불필요
+- 대신 JWT 토큰으로 인증
+
+---
+
+##  개발 가이드
+
+### 코드 컨벤션
+
+#### Java (Backend)
+- 패키지명: 소문자, 도메인 역순
+- 클래스명: PascalCase
+- 메서드명: camelCase
+- 상수: UPPER_SNAKE_CASE
+```java
 // 좋은 예
 public class UserService {
     private static final int MAX_LOGIN_ATTEMPTS = 5;
@@ -820,13 +896,12 @@ public class UserService {
 }
 ```
 
-JavaScript/React (Frontend)
-
-  ● 파일명: PascalCase (컴포넌트), camelCase (유틸)
-  ● 컴포넌트: PascalCase
-  ● 함수/변수: camelCase
-  ● 상수: UPPER_SNAKE_CASE
-```
+#### JavaScript/React (Frontend)
+- 파일명: PascalCase (컴포넌트), camelCase (유틸)
+- 컴포넌트: PascalCase
+- 함수/변수: camelCase
+- 상수: UPPER_SNAKE_CASE
+```javascript
 // 좋은 예
 const API_BASE_URL = 'http://localhost:8080/api';
 
@@ -858,11 +933,17 @@ feat: 상품 비교 기능 추가
 fix: 장바구니 수량 업데이트 버그 수정
 docs: README에 API 문서 추가
 ```
-🐛 트러블슈팅
-1. CORS 에러
-증상: Access to XMLHttpRequest at 'http://localhost:8080' from origin 'http://localhost:3000' has been blocked by CORS policy
-해결:
-```
+
+---
+
+##  트러블슈팅
+
+### 1. CORS 에러
+
+**증상:** `Access to XMLHttpRequest at 'http://localhost:8080' from origin 'http://localhost:3000' has been blocked by CORS policy`
+
+**해결:**
+```java
 // Backend: SecurityConfig.java
 @Bean
 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -879,10 +960,13 @@ public CorsConfigurationSource corsConfigurationSource() {
     // ...
 }
 ```
-2. JWT 토큰 만료
-증상: 401 Unauthorized 에러 지속 발생
-해결:
-```
+
+### 2. JWT 토큰 만료
+
+**증상:** `401 Unauthorized` 에러 지속 발생
+
+**해결:**
+```javascript
 // Frontend: api.js
 axios.interceptors.response.use(
   response => response,
@@ -901,25 +985,36 @@ axios.interceptors.response.use(
   }
 );
 ```
-3. 이미지 경로 문제
-증상: 프로덕션 빌드 후 이미지가 표시되지 않음
-해결:
-```
+
+### 3. 이미지 경로 문제
+
+**증상:** 프로덕션 빌드 후 이미지가 표시되지 않음
+
+**해결:**
+```yaml
 # application.yml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/onandhome?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 ```
-👥 개발자 정보
-개발자: 이상연
-GitHub: [https://github.com/LSY1007/L_OnAndHomeFront]
-이메일: [dltkddus50@naver.com]
-포트폴리오: [포트폴리오 링크]
 
-🙏 감사의 말
+---
+
+##  개발자 정보
+
+**개발자:** 이상연  
+**GitHub:** [https://github.com/LSY1007/L_OnAndHomeFront]  
+**이메일:** [dltkddus50@naver.com]  
+**포트폴리오:** [포트폴리오 링크]
+
+---
+
+##  감사의 말
+
 이 프로젝트는 레거시 시스템을 현대적인 아키텍처로 마이그레이션하는 경험을 통해 많은 것을 배울 수 있었습니다. 특히:
-  ● Monolithic에서 분리 아키텍처로의 전환
-  ● JWT 기반 인증 시스템 구현
-  ● React + Redux를 활용한 상태 관리
-  ● RESTful API 설계 및 구현
+- Monolithic에서 분리 아키텍처로의 전환
+- JWT 기반 인증 시스템 구현
+- React + Redux를 활용한 상태 관리
+- RESTful API 설계 및 구현
+
 앞으로도 더 나은 사용자 경험과 코드 품질을 위해 지속적으로 개선해 나가겠습니다.
