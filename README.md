@@ -601,3 +601,25 @@ GET /api/products?page=0&size=20&sort=createdAt,desc&category=TV
 ● PUT /items/{itemId} - 수량 변경
 ● DELETE /items/{itemId} - 상품 삭제
 ● DELETE /clear - 장바구니 비우기
+
+📦 주문 API (/api/orders)
+● POST / - 주문 생성
+● GET / - 주문 내역 조회
+● GET /{orderId} - 주문 상세 조회
+● PUT /{orderId}/cancel - 주문 취소
+● PUT /{orderId}/status - 주문 상태 변경 (관리자)
+
+💬 리뷰 API (/api/reviews)
+● GET /product/{productId} - 상품 리뷰 조회
+● POST / - 리뷰 작성
+● PUT /{reviewId} - 리뷰 수정
+● DELETE /{reviewId} - 리뷰 삭제
+● POST /{reviewId}/like - 리뷰 좋아요
+
+❓ Q&A API (/api/qna)
+● GET /product/{productId} - 상품 Q&A 조회
+● 
+● 
+● 
+● 
+● 
